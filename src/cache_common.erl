@@ -11,7 +11,7 @@ to_res_id(S) ->
 %% constraints
 datetime(forward, Val) ->
     try
-        iso8601:parse(Val)
+        {ok, iso8601:parse(Val)}
     catch
         _:_ -> {error, {not_a_date, Val}}
     end;

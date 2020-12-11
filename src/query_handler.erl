@@ -37,10 +37,10 @@ to_json(Req, #{key := Key, table := TabName} = State) ->
     {[Body, $\n], Req, State};
 to_json(Req, #{table := TabName, date_from := From, date_to := To} = State) ->
     {ok, T} = cache_table_srv:get_tables(TabName),
+    {ok, Values} = cache_crud:lookup_by_date(T, From, To),
     Body = jsone:encode(#{
-        result => cache_crud:lookup_by_date(T, From, To)
+        result => Values
     }),
-    io:format("~s~n", [Body]),
     {[Body, $\n], Req, State}.
 
 from_res({ok, X}) -> X;
