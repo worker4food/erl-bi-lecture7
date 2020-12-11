@@ -13,10 +13,10 @@ start(_StartType, _StartArgs) ->
     Root = <<"/api/tables">>,
     Routes = cowboy_router:compile([
         {'_', [
-            {[Root, <<"/">>], tab_handler, []},
-            {[Root, <<"/:tab">>], [{tab, nonempty}], obj_handler, []},
-            {[Root, <<"/:tab/:key">>], [{tab, nonempty}, {key, nonempty}], obj_handler, []},
-            {<<"/api/query">>, query_handler, []}
+            {Root, tab_handler, []},
+            {[Root, <<"/:tab">>], obj_handler, []},
+            {[Root, <<"/:tab/:key">>], obj_handler, []},
+            {<<"/api/query/:tab/:action">>, [{action, fun cache_common:action/2}], query_handler, []}
         ]}
     ]),
     {ok, _} = cowboy:start_clear(http, [{port, 8080}], #{

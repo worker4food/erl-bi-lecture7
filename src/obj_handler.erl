@@ -49,4 +49,4 @@ from_json(Req, State) ->
 
 to_json(Req, #{val := {ok, Value}} = State) ->
     Body = jsone:encode(#{result => Value}),
-    {Body, Req, State}.
+    {[Body, $\n], Req, State}.
