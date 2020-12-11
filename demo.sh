@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Flags="-sD -"
+Flags=-sS
 
 set -x
 

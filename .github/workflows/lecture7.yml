@@ -3,7 +3,7 @@ name: Lecture7
 on: push
 
 jobs:
-  test:
+  sample-session:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.0.0
