@@ -1,0 +1,15 @@
+{application, cache,
+ [{description, "Lecture 7 (cache)"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, {cache_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    cowboy
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {links, []}
+ ]}.
