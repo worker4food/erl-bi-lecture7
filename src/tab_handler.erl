@@ -18,9 +18,6 @@ content_types_accepted(Req, State) ->
         {<<"application/json">>, from_json}
     ], Req, State}.
 
-resource_exists(#{method := <<"GET">>} = Req, State) ->
-    Tab = cowboy_req:binding(tab, Req),
-    {cache_table_srv:table_exixts(Tab), Req, State#{name => Tab}};
 resource_exists(Req, State) ->
     {false, Req, State}.
 
