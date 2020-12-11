@@ -1,4 +1,4 @@
--module(common).
+-module(cache_common).
 
 -export([to_res_id/1]).
 

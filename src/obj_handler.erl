@@ -39,7 +39,7 @@ from_json(Req, State) ->
     TabName = cowboy_req:binding(tab, Req),
     {ok, Body, Req1} = cowboy_req:read_body(Req),
     #{<<"key">> := RawKey, <<"value">> := Value} = jsone:decode(Body),
-    Key = common:to_res_id(RawKey),
+    Key = cache_common:to_res_id(RawKey),
     {ok, Tabs} = cache_table_srv:get_tables(TabName),
     ok = cache_crud:insert(Tabs, Key, Value),
     Uri = [cowboy_req:uri(Req1), $/, Key],
