@@ -30,4 +30,4 @@ jobs:
     - name: Demo
       run: ./demo.sh
     - name: Stop app
-      run: _build/default/rel/cache/bin/cache daemon
+      run: _build/default/rel/cache/bin/cache stop
