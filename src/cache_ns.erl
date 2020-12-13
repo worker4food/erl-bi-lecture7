@@ -7,7 +7,14 @@
 -export([start/0, start/1, stop/1, start_link/0]).
 
 %% gen_server
--export([init/1, handle_call/3, handle_cast/2, handle_info/2]).
+-export([
+    init/1,
+    handle_call/3,
+    handle_cast/2,
+    handle_info/2,
+    terminate/2,
+    code_change/3
+]).
 
 %% 'client' functions
 -export([register_name/2, unregister_name/1, whereis_name/1, send/2]).
@@ -60,6 +67,12 @@ handle_info({'DOWN', _, process, Pid, _}, State) ->
 
 handle_info(_, State) ->
     {noreply, State}.
+
+terminate(_Reason, _State) ->
+    ok.
+
+code_change(_OldVsn, State, _Extra) ->
+    {ok, State}.
 
 %% 'client' functions
 register_name(Name, Pid) ->
