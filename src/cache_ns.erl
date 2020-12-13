@@ -31,11 +31,13 @@ init(Args) ->
     {stop, {expected_map, Args}}.
 
 %% gen_server
-handle_call({register_name, Name, Pid}, _, State) when not is_map_key(Name, State) ->
-    monitor(process, Pid),
-    {reply, yes, State#{Name => Pid}};
-handle_call({register_name, _, _}, _, State) ->
-    {reply, no, State};
+handle_call({register_name, Name, Pid}, _, State) ->
+    case maps:is_key(Name, State) of
+        true -> {reply, no, State};
+        false ->
+            monitor(process, Pid),
+            {reply, yes, State#{Name => Pid}}
+    end;
 
 handle_call({whereis_name, Name}, _, State)->
     {reply, maps:get(Name, State, undefined), State};
