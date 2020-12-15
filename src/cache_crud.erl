@@ -14,7 +14,8 @@
     delete_obsolete/1]).
 
 -define(MIN_V, 0).
--define(MAX_V, stub).
+-define(MID_V, stub).
+-define(MAX_V, {}).
 
 new() ->
     new(?ETS_DEFAULT).
@@ -36,13 +37,13 @@ insert(#tables{data = D, ix_ttl = IxTtl, ix_created = IxCreated}, Key, Val, TtlS
     case ets:insert_new(D, Row) of
         false ->
             [{_, _, OldCreatedAt, OldExpiredAt}] = ets:lookup(D, Key),
-            ets:delete(IxTtl, {OldExpiredAt, ?MAX_V, Key}),
-            ets:delete(IxCreated, {OldCreatedAt, ?MAX_V, Key}),
+            ets:delete(IxTtl, {OldExpiredAt, ?MID_V, Key}),
+            ets:delete(IxCreated, {OldCreatedAt, ?MID_V, Key}),
             ets:insert(D, Row);
         true -> true
     end,
-    ets:insert(IxTtl, {{ExpiredAt, ?MAX_V, Key}}),
-    ets:insert(IxCreated, {{CreatedAt, ?MAX_V, Key}}),
+    ets:insert(IxTtl, {{ExpiredAt, ?MID_V, Key}}),
+    ets:insert(IxCreated, {{CreatedAt, ?MID_V, Key}}),
     ok.
 
 lookup(T, Key) ->
@@ -71,8 +72,8 @@ delete_obsolete(#tables{data = D, ix_ttl = IxTtl, ix_created = IxCreated}, Eol) 
     Fn = fun ({ExpiredAt, _, Key}, Acc) ->
         CreatedAt = ets:lookup_element(D, Key, 3),
         ets:delete(D, Key),
-        ets:delete(IxTtl, {ExpiredAt, ?MAX_V, Key}),
-        ets:delete(IxCreated, {CreatedAt, ?MAX_V, Key}),
+        ets:delete(IxTtl, {ExpiredAt, ?MID_V, Key}),
+        ets:delete(IxCreated, {CreatedAt, ?MID_V, Key}),
         Acc
     end,
     MinKey = ets:next(IxTtl, 0), % number < tuple
