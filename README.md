@@ -8,6 +8,11 @@
     $ _build/default/rel/cache/bin/cache stop
 ```
 
+## Tests
+```
+    $ rebar3 ct
+```
+
 ## Sample session
 ```
 + curl -sS -H 'content-type: application/json' http://localhost:8080/api/tables -X POST -d '{"name": "numbers"}'
