@@ -12,7 +12,9 @@ jobs:
           erl -eval 'erlang:display({otp_release, erlang:system_info(otp_release)}), halt().' -noshell
       - name: Build
         run: rebar3 release
+      - name: Test
+        run: rebar3 ct -v
       - name: Run app
         run: _build/default/rel/cache/bin/cache daemon
-      - name: Demo
+      - name: Sample session
         run: ./demo.sh
