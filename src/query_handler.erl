@@ -4,6 +4,7 @@
     init/2,
     allowed_methods/2,
     content_types_provided/2,
+    malformed_request/2,
     resource_exists/2,
     to_json/2
 ]).
@@ -21,6 +22,9 @@ content_types_provided(Req, State) ->
     {[
         {<<"application/json">>, to_json}
     ], Req, State}.
+
+malformed_request(Req, #{table := Tab} = State) ->
+    {not cache_table_srv:table_exists(Tab), Req, State}.
 
 resource_exists(Req, #{action := <<"lookup">>} = State) ->
     M = cowboy_req:match_qs([{key, nonempty}], Req),
