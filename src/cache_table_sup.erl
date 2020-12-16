@@ -4,29 +4,20 @@
 
 -export([start_link/1, init/1]).
 
--include("cache_names.hrl").
+-define(FQN(X), {table, X}).
 
 start_link(Name) ->
-    supervisor:start_link(?GEN_NAME(Name), ?MODULE, [Name]).
-
-% start_link(Name) ->
-    % supervisor:start_link(?MODULE, [Name]).
+    supervisor:start_link({via, syn, ?FQN(Name)}, ?MODULE, [Name]).
 
 init([Name]) ->
     Tables = cache_crud:new(),
-    SrvId = ?GEN_NAME(cache_table_srv, Name),
-    TabSrv = #{
-        id       => cache_table_srv,
-        start    => {cache_table_srv, start_link, [SrvId, Tables]},
-        restart  => permanent,
-        type     => worker,
-        shutdown => brutal_kill
-    },
-    TabGC = #{
+    %% attach tables via meta
+    ok = syn:unregister_and_register(?FQN(Name), self(), Tables),
+    Spec = #{
         id       => cache_table_gc,
         start    => {cache_table_gc, start_link, [Tables]},
         restart  => permanent,
         type     => worker,
         shutdown => brutal_kill
     },
-    {ok, {{rest_for_one, 10, 30}, [TabSrv, TabGC]}}.
+    {ok, {{rest_for_one, 10, 30}, [Spec]}}.

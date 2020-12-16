@@ -24,7 +24,7 @@ content_types_provided(Req, State) ->
     ], Req, State}.
 
 malformed_request(Req, #{table := Tab} = State) ->
-    {not cache_table_srv:table_exists(Tab), Req, State}.
+    {not cache:table_exists(Tab), Req, State}.
 
 resource_exists(Req, #{action := <<"lookup">>} = State) ->
     M = cowboy_req:match_qs([{key, nonempty}], Req),
@@ -35,13 +35,11 @@ resource_exists(Req, #{action := <<"lookup_by_date">>} = State) ->
     {true, Req, maps:merge(State, M)}.
 
 to_json(Req, #{key := Key, table := TabName} = State) ->
-    {ok, T} = cache_table_srv:get_tables(TabName),
-    Res = cache_crud:lookup(T, Key),
+    Res = cache:lookup(TabName, Key),
     Body = jsone:encode(#{result => from_res(Res)}),
     {[Body, $\n], Req, State};
 to_json(Req, #{table := TabName, date_from := From, date_to := To} = State) ->
-    {ok, T} = cache_table_srv:get_tables(TabName),
-    {ok, Values} = cache_crud:lookup_by_date(T, From, To),
+    {ok, Values} = cache:lookup_by_date(TabName, From, To),
     Body = jsone:encode(#{
         result => Values
     }),
