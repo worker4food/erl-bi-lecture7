@@ -41,4 +41,4 @@ get_tables(Name) ->
     gen_server:call(?GEN_NAME(Name), get_tables).
 
 table_exists(Name) ->
-    cache_ns:whereis_name({?MODULE, Name}) =/= undefined.
+    syn:whereis_name({?MODULE, Name}) =/= undefined.

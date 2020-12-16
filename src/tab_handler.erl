@@ -25,7 +25,7 @@ from_json(Req, State) ->
     {ok, Body, Req1} = cowboy_req:read_body(Req),
     #{<<"name">> := RawName} = jsone:decode(Body),
     Name = cache_common:to_res_id(RawName),
-    {Code, Res} = case cache_mgr_sup:start_child(Name) of
+    {Code, Res} = case cache_sup:start_child(Name) of
         {ok, _} -> {201, #{result => ok}};
         {error, {already_started, _}} -> {409, #{result => error}}
     end,
