@@ -177,5 +177,5 @@ lookup_by_date(_) ->
     {ok, Code, _, CliRef} = hackney:get(Url),
     200 = Code,
     {ok, Body} = hackney:body(CliRef),
-    #{<<"result">> := Vals} = jsone:decode(Body),
-    [1, 2, 3] = lists:sort(Vals).
+    #{<<"result">> := Res} = jsone:decode(Body),
+    #{<<"one">> := 1, <<"two">> := 2, <<"three">> := 3} = Res.

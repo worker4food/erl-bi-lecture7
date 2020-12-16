@@ -49,20 +49,26 @@ insert(#tables{data = D, ix_ttl = IxTtl, ix_created = IxCreated}, Key, Val, TtlS
 lookup(T, Key) ->
     lookup(T, Key, now_dt()).
 
-lookup(#tables{data = Data}, Key, Now) ->
+lookup(T, Key, Now) ->
+    case lookup_kv(T, Key, Now) of
+        {_, Val} -> {ok, Val};
+        Other -> Other
+    end.
+
+lookup_kv(#tables{data = Data}, Key, Now) ->
     case ets:lookup(Data, Key) of
-        [{_, Val, _, ExpiredAt}] when Now =< ExpiredAt -> {ok, Val};
+        [{_, Val, _, ExpiredAt}] when Now =< ExpiredAt -> {Key, Val};
         _ -> undefined
     end.
 
 lookup_by_date(#tables{ix_created = Ix} = Tabs, DateFrom, DateTo) ->
     Now = now_dt(),
-    Fn = fun ({_, _, Key}, Acc) -> [lookup(Tabs, Key, Now) | Acc] end,
+    Fn = fun ({_, _, Key}, Acc) -> [lookup_kv(Tabs, Key, Now) | Acc] end,
     BeforeFisrt = {DateFrom, ?MIN_V, undefined},
     AfterLast = {DateTo, ?MAX_V, undefined},
     StartKey = ets:next(Ix, BeforeFisrt),
-    Vals = [ Val || {ok, Val} <- fold_ix_tab(Fn, Ix, StartKey, AfterLast, [])],
-    {ok, Vals}.
+    Rows = [R || {_, _} = R <- fold_ix_tab(Fn, Ix, StartKey, AfterLast, [])],
+    {ok, Rows}.
 
 delete_obsolete(Tabs) ->
     delete_obsolete(Tabs, now_dt()).

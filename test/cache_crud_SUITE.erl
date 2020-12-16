@@ -53,11 +53,12 @@ lookup_expired(Cfg) ->
 lookup_by_date(Cfg) ->
     T = ?config(table, Cfg),
     Keys = ?config(keys, Cfg),
+    KVs = lists:zip(Keys, Keys),
     Start = calendar:universal_time(),
-    [cache_crud:insert(T, X, X, 10000) || X <- Keys],
+    [cache_crud:insert(T, K, V, 10000) || {K, V} <- KVs],
     End = calendar:universal_time(),
-    {ok, Vals} = cache_crud:lookup_by_date(T, Start, End),
-    Keys = lists:sort(Vals).
+    {ok, Res} = cache_crud:lookup_by_date(T, Start, End),
+    KVs = lists:sort(Res).
 
 lookup_by_date_expired(Cfg) ->
     T = ?config(table, Cfg),
